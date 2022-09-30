@@ -1,6 +1,5 @@
 import {initializeApp, applicationDefault, cert} from "firebase-admin/app"
 import {getFirestore, Timestamp, FieldValue} from "firebase-admin/firestore"
-import { serviceAccount } from "../../serviceAccountKey.js"
 import dotenv from "dotenv"
 
 dotenv.config();
