@@ -17,14 +17,14 @@ app.use("/signup",signupRouter)
 app.use("/testimonial",TestimonialRoute)
 
 const PORT = process.env.PORT || 9000
-const MONGO_DB = process.env.MONGO_DB
+// const MONGO_DB = process.env.MONGO_DB
 
-async function DbConnection(){
-    const client = new MongoClient(MONGO_DB)
-    await client.connect()
-    console.log("Data base connected")
-    return client;
-}
+// async function DbConnection(){
+//     const client = new MongoClient(MONGO_DB)
+//     await client.connect()
+//     console.log("Data base connected")
+//     return client;
+// }
 
 // export const client = await DbConnection();
 
