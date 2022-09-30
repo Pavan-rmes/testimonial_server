@@ -34,7 +34,10 @@ TestimonialRoute.get("/all",async (req,res)=>{
     
     const {userId} = req.query;
 
-    
+    if(!userId){
+        res.send({status:"need user Id"});
+        return;
+    }
     // const userId = await isUserExists(email);
 
     console.log(userId)
