@@ -1,7 +1,9 @@
 import express, { response } from "express";
 import dotenv from "dotenv"
 import {isUserExists} from "../Controller/login.js"
-import {getallUserTestimonials, insertFirstTestimonial, isTestimonialExists} from "../Controller/testimonials.js"
+import {getallUserTestimonialwalls, insertFirstTestimonial, isTestimonialExists} from "../Controller/testimonialWalls.js"
+import { getTestimonailData, insertTestimonial, insertTwitterData, isTweetAlreadyExists } from "../Controller/testimonials.js";
+import { getDataFromTwitter } from "../Integrations/Twitter.js";
 
 dotenv.config()
 
@@ -30,6 +32,55 @@ TestimonialRoute.post("/new",async(req,res)=>{
 
 })
 
+TestimonialRoute.post("/new-testimonial",async(req,res)=>{
+    const {title,body,rating,name,userId,testimonialWallName} = req.body;
+    if(!title && !body && !rating && !name && !testimonialWallName){
+        res.send({status:"data incomplete"})
+        return;
+    }
+
+    // get What is the testimonialName
+
+    await insertTestimonial(title,body,rating,name,userId,testimonialWallName);
+    response = {status:"successful"}    
+    res.send(response);
+
+})
+
+
+
+TestimonialRoute.get("/getNewTweet",async (req,res)=>{
+    const {url,id,userId} = req.query;
+    console.log(url)
+    if(!url){
+        res.send({status:"Url needed"})
+        return;
+    }
+    const tweetData = await getDataFromTwitter(url);
+    if(await isTweetAlreadyExists(tweetData.tweetId,userId,id)){
+        res.send({status:"Tweet already Exists"})
+        return;
+    }
+
+    if(!tweetData){
+        res.send({status:"Tweet not found"})
+        return;
+    }
+    tweetData.status = 0;
+    const response = await insertTwitterData(tweetData,userId,id);
+    res.send(response)
+})
+
+TestimonialRoute.get("/all-testimonials",async (req,res)=>{
+    const {id,userId} = req.query;
+    if(!id || !userId){
+        res.send({status:"id or Url is missing"})
+        return;
+    }
+    const response = await getTestimonailData(userId,id);
+    res.send(response)
+})
+
 TestimonialRoute.get("/all",async (req,res)=>{
     
     const {userId} = req.query;
@@ -41,7 +92,7 @@ TestimonialRoute.get("/all",async (req,res)=>{
     // const userId = await isUserExists(email);
 
     console.log(userId)
-    let testimonials = await getallUserTestimonials(userId);
+    let testimonials = await getallUserTestimonialwalls(userId);
 
     res.send(testimonials)
 })

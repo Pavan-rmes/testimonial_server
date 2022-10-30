@@ -2,56 +2,46 @@ import {db} from "./dbInitialize.js"
 import { Timestamp, FieldValue} from "firebase-admin/firestore"
 import { v4 as uuidv4 } from 'uuid';
 
-// update the testimonials
 
-//delete the testimonials
-
-
-//insert the testimonials
-export async function insertFirstTestimonial(name,company,url,userId){
-    const docRef  = db.collection(userId)
-    const resp = await docRef.add({
-        testimonial: `${company} Testimonial Wall`,
-        accepted:0,pending:0,views:0,status:0
+export async function insertTestimonial(title,body,rating,name,userId,testimonialWallName){
+    const docRef  = db.collection(userId).doc("testimonials")
+    const resp = await docRef.set({
+        title,body,name,rating,linked:[testimonialWallName]
     })
     return resp;
     // console.log(resp) 
 }
 
-export async function isTestimonialExists(userId,testimonial){
-    const docRef = db.collection(userId)
-    const resp = await docRef.where("testimonial",'==',testimonial).get();
-    console.log(resp.empty)
-    if(resp.empty){
+
+export async function insertTwitterData(tweetData,userId,id){
+    const docRef = db.collection(userId).doc(id);
+    const data = await docRef.get();
+    let testimonialData = data.data()?.data;
+    if(!testimonialData){
+        testimonialData = [];
+    }
+    const resp = await docRef.set({data:[...testimonialData,tweetData]});
+    return resp;
+}
+
+export async function isTweetAlreadyExists(tweetId,userId,id){
+    const docRef = db.collection(userId).doc(id);
+    const data = await docRef.get();
+    const testimonialData = data.data()?.data;
+    if(!testimonialData){
         return false;
     }
-    return true;  
-
+    for (let i =0;i<testimonialData?.length;i++){
+        if(testimonialData[i].tweetId === tweetId){
+            return true
+        }
+    }
+    return false
 }
 
-export async function getallUserTestimonials(userId){
-    const docRef = db.collection(userId)
-    const resp = await docRef.get();
-    let testimonials = []
-    resp.forEach((doc)=>{
-        const data = doc.data()
-        data && testimonials.push(data);
-    })
-    return testimonials
+export async function getTestimonailData(userId,id){
+    const docRef = db.collection(userId).doc(id);
+    const data = await docRef.get();
+    const testimonialData = data.data()?.data;
+    return testimonialData;
 }
-
-
-
-
-
-// export async function isUserExists(email){
-//     const docRef  = db.collection('login')
-//     const resp = await docRef.where("email",'==',email).get();
-//     if(resp.empty){
-//         return false;
-//     }
-//     resp.forEach((doc)=>{
-//         return(doc.id);
-//     })
-// }
-
