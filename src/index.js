@@ -16,6 +16,8 @@ app.use(express.json())
 app.use("/signup",signupRouter)
 app.use("/testimonial",TestimonialRoute)
 
+app.get("/",async (req,res)=>{res.send("Hello from social proof app")})
+
 const PORT = process.env.PORT || 9000
 // const MONGO_DB = process.env.MONGO_DB
 
