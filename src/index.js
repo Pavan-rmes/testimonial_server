@@ -5,6 +5,8 @@ import cors from "cors"
 import {signupRouter} from "./routes/signup.js"
 import { TestimonialRoute } from "./routes/testimonial.js";
 import {db} from "./Controller/dbInitialize.js"
+import { GoogleReviews } from "./routes/google.js";
+import { TestimonialWallRoute } from "./routes/testimonialWall.js";
 
 dotenv.config()
 
@@ -15,6 +17,8 @@ app.use(cors({ origin: true, credentials: true }))
 app.use(express.json())
 app.use("/signup",signupRouter)
 app.use("/testimonial",TestimonialRoute)
+app.use("/google-reviews",GoogleReviews)
+app.use("/testimonialWalls",TestimonialWallRoute)
 
 app.get("/",async (req,res)=>{res.send("Hello from social proof app")})
 

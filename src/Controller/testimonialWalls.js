@@ -30,18 +30,74 @@ export async function isTestimonialExists(userId,testimonial){
 
 }
 
-export async function getallUserTestimonialwalls(userId){
-    const docRef = db.collection(userId)
-    const resp = await docRef.get();
-    let testimonials = []
-    resp.forEach((doc)=>{
-        const data = doc.data()
-        data && (testimonials = data.walls);
+export async function insertTestimonialWall(title,body,rating,name,userId,testimonialWallName){
+    const docRef  = db.collection(userId).doc("testimonials")
+    const resp = await docRef.set({
+        title,body,name,rating,linked:[testimonialWallName]
     })
-    return testimonials
+    return resp;
+    // console.log(resp) 
 }
 
 
+//get all the testimonial walls for a user
+export async function getallUserTestimonialwalls(userId){
+    const docRef = db.collection(userId)
+    const resp = await docRef.get();
+    let testimonialWalls = []
+    resp.forEach((doc)=>{
+        const data = doc.data()
+        data && (testimonialWalls = data.walls);
+    })
+    return testimonialWalls
+}
+
+
+//check if wallNameAlrady exists
+export async function isWallNameAlreadyExits(wall_name,user_id,wall_id){
+    let testimonialWalls = await getallUserTestimonialwalls(user_id);
+    let isExits = false;
+    testimonialWalls.forEach((testimonialWall)=>{
+        console.log(testimonialWall)
+        if(testimonialWall.wallName == wall_name && testimonialWall.id != wall_id){
+            isExits = true
+        }
+    })
+    return isExits
+
+}
+
+
+//get the testimonialWall name
+export async function getTestimoniallWallData(userId,wall_id){
+    let testimonialWalls = await getallUserTestimonialwalls(userId);
+    let response = {};
+    testimonialWalls?.map((testimonialWall)=>{
+        console.log(testimonialWall)
+        if(testimonialWall.id == wall_id){
+            response.wallName = testimonialWall.wallName;
+            return
+        }
+    })
+    return response
+    
+}
+
+
+//update and set the data
+export async function updateTestimonialWallName(wall_name,user_id,wall_id){
+    const docRef = await db.collection(user_id).doc("testimonialWalls")
+    let testimonialWalls = await getallUserTestimonialwalls(user_id);
+    let updatedTestimonialsWallsData = testimonialWalls
+    testimonialWalls.forEach((testimonialWall,id)=>{
+        if(testimonialWall.id == wall_id){
+            updatedTestimonialsWallsData[id].wallName = wall_name;
+        }
+    })
+    console.log(updatedTestimonialsWallsData)
+    const response = await docRef.set({walls:updatedTestimonialsWallsData})
+    return response
+}
 
 
 

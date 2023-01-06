@@ -66,7 +66,7 @@ export async function getDataFromTwitter(url){
     
 }
 
-getDataFromTwitter("https://twitter.com/happyhomens/status/1585020532038471681?s=20&t=Bw2uBKJ7c10Y2he9-zAa7Q")
+// getDataFromTwitter("https://twitter.com/happyhomens/status/1585020532038471681?s=20&t=Bw2uBKJ7c10Y2he9-zAa7Q")
 
 function getIdFromUrl(url){
     console.log(url)
